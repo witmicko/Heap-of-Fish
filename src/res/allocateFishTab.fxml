@@ -4,12 +4,12 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane fx:id="allocateFishPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.AllocateFishController">
+<AnchorPane fx:id="allocateFishPane" maxHeight="1000.0" maxWidth="1000.0" minHeight="0.0" minWidth="0.0" prefHeight="409.0" prefWidth="566.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.AllocateFishController">
     <children>
-        <Button fx:id="red" layoutX="76.0" layoutY="287.0" mnemonicParsing="false" onMouseClicked="#newFish" text="new RedFish()" />
-        <Button fx:id="yellow" layoutX="426.0" layoutY="287.0" mnemonicParsing="false" onMouseClicked="#newFish" text="new YellowFish()" />
-        <Button fx:id="blue" layoutX="247.0" layoutY="287.0" mnemonicParsing="false" onMouseClicked="#newFish" text="new BlueFish()" />
-        <ListView fx:id="handlePool" editable="false" layoutX="21.0" layoutY="26.0" prefHeight="200.0" prefWidth="200.0" />
-        <ListView fx:id="objectPool" layoutX="315.0" layoutY="26.0" prefHeight="200.0" prefWidth="200.0" />
+        <ListView fx:id="handlePool" editable="false" layoutX="21.0" layoutY="26.0" maxHeight="1.7976931348623157E308" prefHeight="244.0" prefWidth="200.0" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="50.0" AnchorPane.topAnchor="10.0" />
+        <ListView fx:id="objectPool" layoutX="-163.0" layoutY="-154.0" maxHeight="1.7976931348623157E308" prefHeight="244.0" prefWidth="200.0" AnchorPane.bottomAnchor="70.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="10.0" />
+        <Button fx:id="red" layoutX="76.0" layoutY="287.0" mnemonicParsing="false" onMouseClicked="#newFish" text="new RedFish()" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" />
+        <Button fx:id="yellow" layoutX="426.0" layoutY="287.0" mnemonicParsing="false" onMouseClicked="#newFish" text="new YellowFish()" AnchorPane.bottomAnchor="20.0" />
+        <Button fx:id="blue" layoutX="247.0" layoutY="287.0" mnemonicParsing="false" onMouseClicked="#newFish" text="new BlueFish()" AnchorPane.bottomAnchor="20.0" />
     </children>
 </AnchorPane>

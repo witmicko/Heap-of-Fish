@@ -30,4 +30,7 @@ public abstract class Fish {
     public String getColour() {
         return colour;
     }
+
+    abstract public boolean addFish(Fish fish);
+    abstract public boolean removeFish(Fish fish);
 }

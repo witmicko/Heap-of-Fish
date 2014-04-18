@@ -10,4 +10,31 @@ public class BlueFish extends Fish{
     public BlueFish() {
         super("blue");
     }
+
+    @Override
+    public boolean addFish(Fish fish) {
+        if (fish instanceof BlueFish){
+            myFriend = (BlueFish)fish;
+            return true;
+        }
+        else if (fish instanceof YellowFish){
+            myLunch = (YellowFish)fish;
+            return true;
+        }
+        else return false;
+    }
+
+    @Override
+    public boolean removeFish(Fish fish) {
+        if (fish instanceof BlueFish){
+            myFriend = null;
+            return true;
+        }
+        else if (fish instanceof YellowFish){
+            myLunch = null;
+            return true;
+        }
+        else return false;
+    }
+
 }

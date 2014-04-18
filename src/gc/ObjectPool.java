@@ -12,7 +12,7 @@ public class ObjectPool {
     List<Fish>objectPoolList;
 
     public ObjectPool(int size){
-        objectPoolList = new ArrayList<Fish>(size);
+        objectPoolList = new ArrayList<>(size);
         for (int i = 0; i < size; i++){
             objectPoolList.add(null);
         }

@@ -2,13 +2,18 @@ package app;
 
 import gc.Heap;
 import javafx.application.Application;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import models.Fish;
+import models.RedFish;
 import models.YellowFish;
 import sun.applet.Main;
+
+import java.io.BufferedReader;
 
 public class MainApp extends Application {
     Scene scene;
@@ -39,7 +44,6 @@ public class MainApp extends Application {
         scene.getStylesheets().add(stylesheet);
         primaryStage.setTitle("Hello World");
         primaryStage.setScene(scene);
-
         primaryStage.show();
     }
 

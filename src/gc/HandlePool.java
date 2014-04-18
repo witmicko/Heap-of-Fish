@@ -12,7 +12,7 @@ public class HandlePool {
     List <Fish>fishList;
 
     public HandlePool(int size) {
-        fishList = new ArrayList<Fish>(size);
+        fishList = new ArrayList<>(size);
         for (int i = 0; i < size; i++){
             fishList.add(null);
         }
