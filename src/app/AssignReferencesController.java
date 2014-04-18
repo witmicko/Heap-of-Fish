@@ -59,10 +59,10 @@ final public class AssignReferencesController implements Initializable {
                 imageView.setLinkMode();
                 break;
             case UNLINK:
-                imageView.setUnlinkMode();
+                imageView.setUnlinkModeOn();
                 break;
         }
-        imageView.setX(Math.random() * 500 + 120);
+        imageView.setX(Math.random() * app.scene.getWidth());
         imageView.setY(Math.random() * 300);
         return imageView;
     }
@@ -76,14 +76,16 @@ final public class AssignReferencesController implements Initializable {
                 case "move":
                     mode = Mode.MOVE;
                     f.setMoveMode();
+                    f.setUnlinkModeOff();
                     break;
                 case "link":
                     mode = Mode.LINK;
                     f.setLinkMode();
+                    f.setUnlinkModeOff();
                     break;
                 case "unlink":
                     mode = Mode.UNLINK;
-                    f.setUnlinkMode();
+                    f.setUnlinkModeOn();
                     break;
             }
         }

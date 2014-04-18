@@ -40,18 +40,18 @@ public class Link extends Line {
                 l.setStrokeWidth(2.0);
             }
         });
-        this.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                System.out.println("line clicked");
-
-                Link l = (Link)event.getTarget();
-                Pane assignRefsPane = (Pane)l.getParent();
-                assignRefsPane.getChildren().remove(l);
-                l.unlink();
-                System.out.println();
-            }
-        });
+//        this.setOnMouseClicked(new EventHandler<MouseEvent>() {
+//            @Override
+//            public void handle(MouseEvent event) {
+//                System.out.println("line clicked");
+//
+//                Link l = (Link)event.getTarget();
+//                Pane assignRefsPane = (Pane)l.getParent();
+//                assignRefsPane.getChildren().remove(l);
+//                l.unlink();
+//                System.out.println();
+//            }
+//        });
     }
 
     public boolean link(Fish source , Fish target){
@@ -67,9 +67,31 @@ public class Link extends Line {
 
     }
 
-    private void unlink(){
+    public void unlink(){
         source.removeFish(target);
         source = null;
         target = null;
+    }
+
+    public boolean linkedToType(Fish fish){
+        return source.linkedToType(fish);
+    }
+
+    public void unlinkModeOn(){
+            this.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println("line clicked");
+
+                Link l = (Link)event.getTarget();
+                Pane assignRefsPane = (Pane)l.getParent();
+                assignRefsPane.getChildren().remove(l);
+                l.unlink();
+                System.out.println();
+            }
+        });
+    }
+    public void unlinkModeOff(){
+        this.setOnMouseClicked(null);
     }
 }

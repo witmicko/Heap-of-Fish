@@ -22,8 +22,8 @@ import java.util.List;
  * Created by michal on 17/03/14.
  */
 public class FishImageView extends ImageView {
-    private List<Link>sourceLinks = new ArrayList<>();
-    private List<Link>targetLinks = new ArrayList<>();
+    private List<Link> sourceLinks = new ArrayList<>();
+    private List<Link> targetLinks = new ArrayList<>();
     private final double FITSIZE = 25;
     public String mode;
     private Fish fish;
@@ -78,17 +78,16 @@ public class FishImageView extends ImageView {
                 imageView.setCursor(javafx.scene.Cursor.HAND);
 
                 Point2D p;
-                for(Link l: sourceLinks){
-                    p =getGlobalCoords(imageView);
+                for (Link l : sourceLinks) {
+                    p = getGlobalCoords(imageView);
                     l.setStartX(p.getX());
                     l.setStartY(p.getY());
                 }
-                for(Link l: targetLinks){
-                    p =getGlobalCoords(imageView);
+                for (Link l : targetLinks) {
+                    p = getGlobalCoords(imageView);
                     l.setEndX(p.getX());
                     l.setEndY(p.getY());
                 }
-
                 mouseEvent.consume();
             }
         });
@@ -122,7 +121,6 @@ public class FishImageView extends ImageView {
                 ClipboardContent content = new ClipboardContent();
                 content.putString("");
                 db.setContent(content);
-                System.out.println(db);
 
                 imageView.setScaleX(1.1);
                 imageView.setScaleY(1.1);
@@ -130,7 +128,6 @@ public class FishImageView extends ImageView {
                 event.consume();
             }
         });
-        System.out.println("set drag over");
         this.setOnDragOver(new EventHandler<DragEvent>() {
             public void handle(DragEvent event) {
                 event.acceptTransferModes(TransferMode.LINK);
@@ -159,7 +156,7 @@ public class FishImageView extends ImageView {
                 trgView.setScaleX(1.0);
                 trgView.setScaleY(1.0);
 
-                setupLink(srcView,trgView);
+                setupLink(srcView, trgView);
 
                 event.consume();
             }
@@ -174,10 +171,19 @@ public class FishImageView extends ImageView {
         Point2D p2 = getGlobalCoords(trgView);
 
         Pane assignRefsPane = (Pane) this.getParent();
-        System.out.println(assignRefsPane.getParent());
-
         Link link = new Link(p1, p2, source, target);
 
+        System.out.println(srcView.sourceLinks);
+        for (int i = 0; i < srcView.sourceLinks.size(); i++) {
+            System.out.println("source " + source + " target" + target);
+            Link l = srcView.sourceLinks.get(i);
+            System.out.println(l);
+            if (l.linkedToType(target)) {
+                assignRefsPane.getChildren().remove(l);
+                l.unlink();
+                srcView.sourceLinks.remove(l);
+            }
+        }
         srcView.sourceLinks.add(link);
         trgView.targetLinks.add(link);
         if (link.link(source, target)) {
@@ -187,9 +193,6 @@ public class FishImageView extends ImageView {
         }
     }
 
-    private void correctLinks(){
-
-    }
 
     public void clearEventHandler() {
         this.setCursor(Cursor.DEFAULT);
@@ -200,30 +203,38 @@ public class FishImageView extends ImageView {
         this.setOnMouseEntered(null);
     }
 
-    public void setUnlinkMode() {
+    public void setUnlinkModeOn() {
+        for (Link l : sourceLinks) {
+            l.unlinkModeOn();
+        }
+    }
 
-
+    public void setUnlinkModeOff(){
+        for(Link l: sourceLinks){
+            l.unlinkModeOff();
+        }
     }
 
     public Fish getFish() {
         return this.fish;
     }
 
-    private Point2D getGlobalCoords(FishImageView fishImageView){
-        double x = (fishImageView.getBoundsInLocal().getMinX() + fishImageView.getBoundsInLocal().getMaxX ()) / 2;
-        double y = ((fishImageView.getBoundsInLocal().getMinY() + fishImageView.getBoundsInLocal().getMaxY()) / 2)-28;
+    private Point2D getGlobalCoords(FishImageView fishImageView) {
+        double x = (fishImageView.getBoundsInLocal().getMinX() + fishImageView.getBoundsInLocal().getMaxX()) / 2;
+        double y = ((fishImageView.getBoundsInLocal().getMinY() + fishImageView.getBoundsInLocal().getMaxY()) / 2) - 28;
 
-        return fishImageView.localToScene(x,y);
+        return fishImageView.localToScene(x, y);
     }
 
-    public void _setX(double x){
+    public void _setX(double x) {
         this.x = x;
     }
-    public void _setY(double y){
-        this.y=y;
+
+    public void _setY(double y) {
+        this.y = y;
     }
 
-    public boolean containsFish(Fish fish){
+    public boolean containsFish(Fish fish) {
         return this.fish == fish;
     }
 }

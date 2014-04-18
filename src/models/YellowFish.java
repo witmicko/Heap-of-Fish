@@ -29,4 +29,10 @@ public class YellowFish extends Fish {
         }
         else return false;
     }
+
+    @Override
+    public boolean linkedToType(Fish fish) {
+        if(myFriend != null && fish instanceof YellowFish )return  true;
+        return false;
+    }
 }

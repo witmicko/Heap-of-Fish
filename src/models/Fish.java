@@ -33,4 +33,5 @@ public abstract class Fish {
 
     abstract public boolean addFish(Fish fish);
     abstract public boolean removeFish(Fish fish);
+    abstract public boolean linkedToType(Fish fish);
 }
