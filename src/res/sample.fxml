@@ -6,18 +6,14 @@
 
 <TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.MainController">
     <tabs>
-        <Tab text="Alocate fish">
+        <Tab text="Allocate fish">
             <content>
                 <fx:include fx:id="allocateFishTab" source="allocateFishTab.fxml" />
             </content>
         </Tab>
         <Tab onSelectionChanged="#drawAllFish" text="Assign references">
             <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                    <children>
                         <fx:include fx:id="assignRefsTab" source="assignReferencesTab.fxml" />
-                    </children>
-                </AnchorPane>
             </content>
         </Tab>
     </tabs>

@@ -1,5 +1,6 @@
 package models;
 
+import app.FishImageView;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.geometry.Point2D;
@@ -12,11 +13,15 @@ import javafx.scene.shape.Line;
  * Created by michal on 18/04/2014.
  */
 public class Link extends Line {
-    private Fish source;
-    private Fish target;
+//    private Fish source;
+//    private Fish target;
+    private FishImageView sourceView;
+    private FishImageView targetView;
 
-    public Link(Point2D p1, Point2D p2, Fish source, Fish target){
-//        link(source,target);
+//    public Link(Point2D p1, Point2D p2, Fish source, Fish target,FishImageView srcView,FishImageView trgView){
+    public Link(Point2D p1, Point2D p2,FishImageView srcView,FishImageView trgView){
+        this.sourceView = srcView;
+        this.targetView = trgView;
 
         this.setStartX(p1.getX());
         this.setStartY(p1.getY());
@@ -40,58 +45,54 @@ public class Link extends Line {
                 l.setStrokeWidth(2.0);
             }
         });
-//        this.setOnMouseClicked(new EventHandler<MouseEvent>() {
-//            @Override
-//            public void handle(MouseEvent event) {
-//                System.out.println("line clicked");
-//
-//                Link l = (Link)event.getTarget();
-//                Pane assignRefsPane = (Pane)l.getParent();
-//                assignRefsPane.getChildren().remove(l);
-//                l.unlink();
-//                System.out.println();
-//            }
-//        });
+        link(sourceView,targetView);
     }
 
-    public boolean link(Fish source , Fish target){
+    public boolean link(FishImageView sourceView, FishImageView targetView){
+        Fish source = sourceView.getFish();
+        Fish target = targetView.getFish();
         if (source.addFish(target)){
-            this.source = source;
-            this.target = target;
+//            this.source = source;
+            this.sourceView = sourceView;
+//            this.target = target;
+            this.targetView = targetView;
             return true;
         }else{
-//            Pane assignRefsPane = (Pane)this.getParent();
-//            assignRefsPane.getChildren().remove(this);
             return false;
         }
 
     }
 
     public void unlink(){
-        source.removeFish(target);
-        source = null;
-        target = null;
+//        source.removeFish(target);
+//        source = null;
+//        target = null;
     }
 
     public boolean linkedToType(Fish fish){
-        return source.linkedToType(fish);
+        return sourceView.getFish().linkedToType(fish);
     }
 
     public void unlinkModeOn(){
             this.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                System.out.println("line clicked");
-
+                System.out.println(event);
                 Link l = (Link)event.getTarget();
                 Pane assignRefsPane = (Pane)l.getParent();
                 assignRefsPane.getChildren().remove(l);
                 l.unlink();
-                System.out.println();
+                sourceView.removeLink(l);
+                targetView.removeLink(l);
             }
         });
     }
     public void unlinkModeOff(){
         this.setOnMouseClicked(null);
+    }
+
+    public void destroy(){
+        sourceView.removeLink(this);
+        targetView.removeLink(this);
     }
 }

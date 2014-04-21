@@ -13,8 +13,5 @@
 </toggleGroup></RadioButton>
         <RadioButton id="link" layoutX="213.0439453125" layoutY="325.5" mnemonicParsing="false" onMouseClicked="#changeMode" text="Link Fish" toggleGroup="$modeToggle" />
         <RadioButton id="unlink" layoutX="342.5439453125" layoutY="325.5" mnemonicParsing="false" onMouseClicked="#changeMode" text="Unlink Fish" toggleGroup="$modeToggle" />
-        <Button layoutX="37.0" layoutY="100.0" mnemonicParsing="false" text="Button" />
-        <Button layoutX="37.0" layoutY="154.0" mnemonicParsing="false" text="Button" />
-        <Button layoutX="37.0" layoutY="211.0" mnemonicParsing="false" text="Button" />
     </children>
 </Pane>

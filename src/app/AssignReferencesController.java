@@ -3,16 +3,16 @@ package app;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.LineTo;
-import javafx.scene.shape.MoveTo;
-import javafx.scene.shape.Path;
+import javafx.scene.shape.*;
+import models.BlueFish;
 import models.Fish;
+import models.RedFish;
+import models.YellowFish;
 
 import java.net.URL;
 import java.util.*;
@@ -29,9 +29,12 @@ final public class AssignReferencesController implements Initializable {
     private Mode mode = Mode.MOVE;
     @FXML Pane assignRefsPane;
     @FXML ToggleGroup modeToggle;
-    List<FishImageView> fishImageViews = new ArrayList<>(20);
+    private List<FishImageView> fishImageViews = new ArrayList<>(20);
+    private LocalVarView[] locVars= new LocalVarView[4];
+
 
     public void drawAllFish() {
+        drawLocalVars();
         List<Fish> fishList = app.heap.getHandlePoolList();
 
         if (fishImageViews.size() != fishList.size()) {
@@ -40,7 +43,7 @@ final public class AssignReferencesController implements Initializable {
                 for (FishImageView fishView : fishImageViews) {
                     if (fishView.containsFish(f)) drawn = true;
                 }
-                if (!drawn && f!=null) {
+                if (!drawn && f != null) {
                     FishImageView fishImageView = initImage(f);
                     fishImageViews.add(fishImageView);
                     assignRefsPane.getChildren().add(fishImageView);
@@ -48,6 +51,55 @@ final public class AssignReferencesController implements Initializable {
             }
         }
     }
+
+    private void drawLocalVars() {
+        Fish fish = null;
+        for (int i = 1; i <= 3; i++) {
+            switch (i) {
+                case 1:
+                    fish = new RedFish();
+                    break;
+                case 2:
+                    fish = new BlueFish();
+                    break;
+                case 3:
+                    fish = new YellowFish();
+                    break;
+            }
+//            FishImageView view = new FishImageView(fish, 50, i * 50 + 50);
+            LocalVarView view = new LocalVarView(fish, 50, i * 50 + 50);
+            locVars[i]=view;
+            view.setAsLocalVar();
+            view.setScaleX(1.5);
+            view.setScaleY(1.5);
+            view.setOnDragDetected(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    Dragboard db = view.startDragAndDrop(TransferMode.LINK);
+                    ClipboardContent content = new ClipboardContent();
+                    content.putString("");
+                    db.setContent(content);
+                    event.consume();
+                }
+            });
+            view.setOnDragOver(new EventHandler<DragEvent>() {
+                public void handle(DragEvent event) {
+                    event.acceptTransferModes(TransferMode.LINK);
+                    event.consume();
+                }
+            });
+            Rectangle rec = new Rectangle(50,40,Color.GRAY);
+            rec.setStrokeWidth(3);
+            rec.setStroke(Color.BLACK);
+            rec.setX(view.getX()-10);
+            rec.setY(view.getY()-7);
+            assignRefsPane.getChildren().add(rec);
+            assignRefsPane.getChildren().add(view);
+            view.setUnlinkMode();
+            rec.toBack();
+        }
+    }
+
 
     private FishImageView initImage(Fish fish) {
         final FishImageView imageView = new FishImageView(fish);
@@ -59,11 +111,16 @@ final public class AssignReferencesController implements Initializable {
                 imageView.setLinkMode();
                 break;
             case UNLINK:
-                imageView.setUnlinkModeOn();
+                imageView.setUnlinkMode();
                 break;
         }
-        imageView.setX(Math.random() * app.scene.getWidth());
-        imageView.setY(Math.random() * 300);
+
+        Random rand = new Random();
+        double x = 100 + rand.nextInt((int) app.scene.getWidth() - 200);
+        imageView.setX(x);
+
+        double y = rand.nextInt((int) (app.scene.getHeight() - 100));
+        imageView.setY(y);
         return imageView;
     }
 
@@ -76,16 +133,14 @@ final public class AssignReferencesController implements Initializable {
                 case "move":
                     mode = Mode.MOVE;
                     f.setMoveMode();
-                    f.setUnlinkModeOff();
                     break;
                 case "link":
                     mode = Mode.LINK;
                     f.setLinkMode();
-                    f.setUnlinkModeOff();
                     break;
                 case "unlink":
                     mode = Mode.UNLINK;
-                    f.setUnlinkModeOn();
+                    f.setUnlinkMode();
                     break;
             }
         }

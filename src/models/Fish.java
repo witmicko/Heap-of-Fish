@@ -13,25 +13,32 @@ public abstract class Fish {
     Image image;
     private String colour;
 
-    public Fish(final String colour){
+    public Fish(final String colour) {
         this.image = loadImage(colour);
         this.colour = colour;
     }
 
-    public static Image loadImage(String colour){
-        return new Image("res\\"+colour+"_fish.png",true);
+    public static Image loadImage(String colour) {
+        return new Image("res\\" + colour + "_fish.png", true);
     }
 
-    public String toString(){
+    public String toString() {
         return this.getClass().toString();
     }
-    public Image getImage(){return image;}
+
+    public Image getImage() {
+        return image;
+    }
 
     public String getColour() {
         return colour;
     }
 
     abstract public boolean addFish(Fish fish);
+
     abstract public boolean removeFish(Fish fish);
+
     abstract public boolean linkedToType(Fish fish);
+
+
 }
