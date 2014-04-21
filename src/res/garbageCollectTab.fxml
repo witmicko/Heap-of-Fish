@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane fx:id="garbCollPane" maxHeight="Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="395.0" prefWidth="591.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.GarbageCollectController">
+<children>
+    <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onMouseClicked="#copyFish" text="Start GC" /><Button layoutX="94.0" layoutY="14.0" mnemonicParsing="false" onAction="#step" text="Step" /><Button layoutX="163.1875" layoutY="14.0" mnemonicParsing="false" onAction="#reset" text="Reset(maybe)" />
+</children></Pane>

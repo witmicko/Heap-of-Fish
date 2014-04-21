@@ -22,9 +22,9 @@ import java.util.Locale;
 /**
  * Created by michal on 17/03/14.
  */
-public class FishImageView extends ImageView {
-    private List<Link> sourceLinks = new ArrayList<>();
-    private List<Link> targetLinks = new ArrayList<>();
+public class FishImageView extends ImageView{
+    protected List<Link> sourceLinks = new ArrayList<>();
+    protected List<Link> targetLinks = new ArrayList<>();
     private final double FITSIZE = 25;
     public String mode;
     private Fish fish;
@@ -46,6 +46,27 @@ public class FishImageView extends ImageView {
         this.setX(x);
         this.setY(y);
         setFitSize();
+    }
+    public FishImageView(FishImageView another){
+        this.fish = another.getFish();
+        this.setImage(another.getFish().getImage());
+        this.setX(another.getX());
+        this.setY(another.getY());
+        this.setLayoutX(another.getLayoutX());
+        this.setLayoutY(another.getLayoutY());
+        //
+        this.setScaleX(another.getScaleX());
+        this.setScaleY(another.getScaleY());
+        //
+        setFitSize();
+        for(Link l:another.sourceLinks){
+            Link link = new Link(l);
+            this.sourceLinks.add(link);
+        }
+        for(Link l:another.targetLinks){
+            Link link = new Link(l);
+            this.targetLinks.add(link);
+        }
     }
 
     public void setMoveMode() {
@@ -142,13 +163,13 @@ public class FishImageView extends ImageView {
             public void handle(DragEvent event) {
                 FishImageView srcView = (FishImageView) event.getGestureSource();
                 FishImageView trgView = (FishImageView) event.getTarget();
-                System.out.println(srcView);
+                trgView.setScaleX(1.0);
+                trgView.setScaleY(1.0);
+
                 if (!(srcView instanceof LocalVarView)) {
                     srcView.setScaleX(1.0);
                     srcView.setScaleY(1.0);
                 }
-                trgView.setScaleX(1.0);
-                trgView.setScaleY(1.0);
 
                 setupLink(srcView, trgView);
                 event.consume();
@@ -161,44 +182,29 @@ public class FishImageView extends ImageView {
         Fish source = srcView.getFish();
         Fish target = trgView.getFish();
 
-        Point2D p1 = getGlobalCoords(srcView);
-        Point2D p2 = getGlobalCoords(trgView);
+        if (source.canBeLinked(target)) {
+            Point2D p1 = getGlobalCoords(srcView);
+            Point2D p2 = getGlobalCoords(trgView);
 
-        Pane assignRefsPane = (Pane) this.getParent();
-        System.out.println();
-        for (int i = 0; i < srcView.sourceLinks.size(); i++) {
-            Link l = srcView.sourceLinks.get(i);
-            boolean linked = l.linkedToType(target);
-            if (linked) {
-                assignRefsPane.getChildren().remove(l);
-                l.destroy();
+            Pane assignRefsPane = (Pane) this.getParent();
+            for (int i = 0; i < srcView.sourceLinks.size(); i++) {
+                Link l = srcView.sourceLinks.get(i);
+                boolean linked = l.linkedToType(target);
+                if (linked) {
+                    assignRefsPane.getChildren().remove(l);
+                    l.destroy();
+                }
+            }
+            if (srcView instanceof LocalVarView && source.getClass() != target.getClass()) {
+                System.out.println("cannot link these");
+            } else {
+                Link link = new Link(p1, p2, srcView, trgView);
+                srcView.sourceLinks.add(link);
+                trgView.targetLinks.add(link);
+                assignRefsPane.getChildren().add(link);
+                link.toBack();
             }
         }
-        Link link = new Link(p1, p2, srcView, trgView);
-        srcView.sourceLinks.add(link);
-        trgView.targetLinks.add(link);
-        assignRefsPane.getChildren().add(link);
-        link.toBack();
-
-
-//        Link link = new Link(p1, p2, source, target, srcView, trgView);
-//
-//        if (link.link(source, target)) {
-//            for (int i = 0; i < srcView.sourceLinks.size(); i++) {
-//                Link l = srcView.sourceLinks.get(i);
-//                System.out.println(l);
-//                if (l.linkedToType(target)) {
-//                    assignRefsPane.getChildren().remove(l);
-//                    l.unlink();
-//                    srcView.removeLink(l);
-//                }
-//            }
-//            srcView.sourceLinks.add(link);
-//            trgView.targetLinks.add(link);
-//            assignRefsPane.getChildren().add(link);
-//            link.toBack();
-//    }
-
     }
 
     public void setUnlinkMode() {
@@ -219,7 +225,7 @@ public class FishImageView extends ImageView {
         this.setOnMouseEntered(null);
     }
 
-    private Point2D getGlobalCoords(FishImageView fishImageView) {
+    protected Point2D getGlobalCoords(FishImageView fishImageView) {
         int offset = (fishImageView instanceof LocalVarView) ? 15 : 28;
         double x = (fishImageView.getBoundsInLocal().getMinX() + fishImageView.getBoundsInLocal().getMaxX()) / 2;
         double y = ((fishImageView.getBoundsInLocal().getMinY() + fishImageView.getBoundsInLocal().getMaxY()) / 2) - offset;

@@ -48,6 +48,15 @@ public class Link extends Line {
         link(sourceView,targetView);
     }
 
+    public Link(Link another){
+        this.sourceView = another.sourceView;
+        this.targetView = another.targetView;
+        this.setStartX(another.getStartX());
+        this.setStartY(another.getStartY());
+        this.setEndX(another.getEndX());
+        this.setEndY(another.getEndY());
+        this.setStrokeWidth(2.0);
+    }
     public boolean link(FishImageView sourceView, FishImageView targetView){
         Fish source = sourceView.getFish();
         Fish target = targetView.getFish();
@@ -70,7 +79,7 @@ public class Link extends Line {
     }
 
     public boolean linkedToType(Fish fish){
-        return sourceView.getFish().linkedToType(fish);
+        return targetView.getFish().getClass() == fish.getClass();
     }
 
     public void unlinkModeOn(){
@@ -92,6 +101,7 @@ public class Link extends Line {
     }
 
     public void destroy(){
+        sourceView.getFish().removeFish(this.targetView.getFish());
         sourceView.removeLink(this);
         targetView.removeLink(this);
     }

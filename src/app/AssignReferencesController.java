@@ -1,5 +1,6 @@
 package app;
 
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -29,15 +30,19 @@ final public class AssignReferencesController implements Initializable {
     private Mode mode = Mode.MOVE;
     @FXML Pane assignRefsPane;
     @FXML ToggleGroup modeToggle;
-    private List<FishImageView> fishImageViews = new ArrayList<>(20);
-    private LocalVarView[] locVars= new LocalVarView[4];
+    protected List<FishImageView> fishImageViews = new ArrayList<>(20);
+    private LocalVarView[] locVars = new LocalVarView[4];
 
 
     public void drawAllFish() {
+
+        assignRefsPane.getChildren().removeAll(fishImageViews);
+        assignRefsPane.getChildren().addAll(fishImageViews);
+//        printAll();
         drawLocalVars();
         List<Fish> fishList = app.heap.getHandlePoolList();
 
-        if (fishImageViews.size() != fishList.size()) {
+//        if (fishImageViews.size() != fishList.size()) {
             for (Fish f : fishList) {
                 boolean drawn = false;
                 for (FishImageView fishView : fishImageViews) {
@@ -49,7 +54,7 @@ final public class AssignReferencesController implements Initializable {
                     assignRefsPane.getChildren().add(fishImageView);
                 }
             }
-        }
+//        }
     }
 
     private void drawLocalVars() {
@@ -66,9 +71,8 @@ final public class AssignReferencesController implements Initializable {
                     fish = new YellowFish();
                     break;
             }
-//            FishImageView view = new FishImageView(fish, 50, i * 50 + 50);
             LocalVarView view = new LocalVarView(fish, 50, i * 50 + 50);
-            locVars[i]=view;
+            locVars[i] = view;
             view.setAsLocalVar();
             view.setScaleX(1.5);
             view.setScaleY(1.5);
@@ -88,11 +92,11 @@ final public class AssignReferencesController implements Initializable {
                     event.consume();
                 }
             });
-            Rectangle rec = new Rectangle(50,40,Color.GRAY);
+            Rectangle rec = new Rectangle(50, 40, Color.GRAY);
             rec.setStrokeWidth(3);
             rec.setStroke(Color.BLACK);
-            rec.setX(view.getX()-10);
-            rec.setY(view.getY()-7);
+            rec.setX(view.getX() - 10);
+            rec.setY(view.getY() - 7);
             assignRefsPane.getChildren().add(rec);
             assignRefsPane.getChildren().add(view);
             view.setUnlinkMode();
@@ -153,5 +157,22 @@ final public class AssignReferencesController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         System.out.println("Initializing the assignRefs controller");
+    }
+    private void printAll(){
+        System.out.println("*******************");
+        for(FishImageView fV: fishImageViews){
+            System.out.println(fV.getFish().toString() + " "+fV.getFish().hashCode());
+        }
+    }
+    public List<FishImageView> getAllImages(){
+        List<FishImageView> images = new ArrayList<>();
+        for(FishImageView f: fishImageViews){
+            images.add(new FishImageView(f));
+        }
+
+        for (int i = 1; i < locVars.length; i++) {
+            images.add(new LocalVarView(locVars[i]));
+        }
+        return images;
     }
 }

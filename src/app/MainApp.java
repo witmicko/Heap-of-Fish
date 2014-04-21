@@ -20,6 +20,7 @@ public class MainApp extends Application {
     Heap heap;
     AllocateFishController allocController;
     AssignReferencesController assignRefController;
+    GarbageCollectController garbCollController;
     MainController mainController;
 
     @Override
@@ -29,11 +30,14 @@ public class MainApp extends Application {
         FXMLLoader mainFxmlLoader = new FXMLLoader(MainApp.class.getResource("/res/sample.fxml"));
         Parent root = (Parent) mainFxmlLoader.load();
 
-        allocController =(AllocateFishController) mainFxmlLoader.getNamespace().get("allocateFishTabController");
+        allocController = (AllocateFishController) mainFxmlLoader.getNamespace().get("allocateFishTabController");
         allocController.setApp(this);
 
-        assignRefController =(AssignReferencesController) mainFxmlLoader.getNamespace().get("assignRefsTabController");
+        assignRefController = (AssignReferencesController) mainFxmlLoader.getNamespace().get("assignRefsTabController");
         assignRefController.setApp(this);
+
+        garbCollController = (GarbageCollectController) mainFxmlLoader.getNamespace().get("garbageCollectTabController");
+        garbCollController.setApp(this);
 
         mainController = (MainController) mainFxmlLoader.getNamespace().get("controller");
         mainController.setApp(this);

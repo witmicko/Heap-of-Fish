@@ -14,41 +14,45 @@ public class RedFish extends Fish {
 
     @Override
     public boolean addFish(Fish fish) {
-        if (fish instanceof RedFish){
-            myFriend = (RedFish)fish;
+        if (fish instanceof RedFish) {
+            myFriend = (RedFish) fish;
             return true;
-        }
-        else if (fish instanceof BlueFish){
-            myLunch = (BlueFish)fish;
+        } else if (fish instanceof BlueFish) {
+            myLunch = (BlueFish) fish;
             return true;
-        }else if (fish instanceof YellowFish){
-            mySnack = (YellowFish)fish;
+        } else if (fish instanceof YellowFish) {
+            mySnack = (YellowFish) fish;
             return true;
-        }
-        else return false;
+        } else return false;
     }
 
     @Override
     public boolean removeFish(Fish fish) {
-        if (fish instanceof RedFish){
+        if (fish instanceof RedFish) {
             myFriend = null;
             return true;
-        }
-        else if (fish instanceof BlueFish){
+        } else if (fish instanceof BlueFish) {
             myLunch = null;
             return true;
-        }else if (fish instanceof YellowFish){
+        } else if (fish instanceof YellowFish) {
             mySnack = null;
             return true;
-        }
+        } else return false;
+    }
+
+    @Override
+    public boolean canBeLinked(Fish fish) {
+        if (fish instanceof RedFish) return true;
+        else if (fish instanceof BlueFish) return true;
+        else if (fish instanceof YellowFish) return true;
         else return false;
     }
 
     @Override
-    public boolean linkedToType(Fish fish) {
-        if(myFriend != null && fish instanceof RedFish )return  true;
-        else if(myLunch != null && fish instanceof BlueFish)return true;
-        else if(mySnack != null && fish instanceof YellowFish)return true;
-        return false;
+    public String toString() {
+        return super.toString()
+                + "\n\t" + "Friend: " + myFriend
+                + "\n\t" + "Lunch : " + myLunch
+                + "\n\t" + "Snack : " + mySnack;
     }
 }

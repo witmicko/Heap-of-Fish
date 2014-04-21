@@ -22,10 +22,6 @@ public abstract class Fish {
         return new Image("res\\" + colour + "_fish.png", true);
     }
 
-    public String toString() {
-        return this.getClass().toString();
-    }
-
     public Image getImage() {
         return image;
     }
@@ -38,7 +34,9 @@ public abstract class Fish {
 
     abstract public boolean removeFish(Fish fish);
 
-    abstract public boolean linkedToType(Fish fish);
+    abstract public boolean canBeLinked(Fish fish);
 
-
+    public String toString(){
+        return "Fish: "+ this.getClass()+"@"+ System.identityHashCode(this) ;
+    }
 }

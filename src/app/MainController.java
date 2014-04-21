@@ -22,6 +22,10 @@ public class MainController implements Initializable {
         app.assignRefController.drawAllFish();
     }
 
+    public void copyFish(){
+        app.garbCollController.copyFish();
+    }
+
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {

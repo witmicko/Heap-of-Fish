@@ -2,18 +2,24 @@
 
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.MainController">
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
+         prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8"
+         xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.MainController">
     <tabs>
         <Tab text="Allocate fish">
             <content>
-                <fx:include fx:id="allocateFishTab" source="allocateFishTab.fxml" />
+                <fx:include fx:id="allocateFishTab" source="allocateFishTab.fxml"/>
             </content>
         </Tab>
         <Tab onSelectionChanged="#drawAllFish" text="Assign references">
             <content>
-                        <fx:include fx:id="assignRefsTab" source="assignReferencesTab.fxml" />
+                <fx:include fx:id="assignRefsTab" source="assignReferencesTab.fxml"/>
+            </content>
+        </Tab>
+        <Tab text="Garbage collect">
+            <content>
+                <fx:include fx:id="garbageCollectTab" source="garbageCollectTab.fxml"/>
             </content>
         </Tab>
     </tabs>
