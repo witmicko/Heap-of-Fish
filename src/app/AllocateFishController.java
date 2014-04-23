@@ -1,27 +1,17 @@
 package app;
 
-import com.sun.javafx.scene.control.skin.ListViewSkin;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
-import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextBoundsType;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import models.BlueFish;
 import models.Fish;
 import models.RedFish;
@@ -31,10 +21,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.function.Consumer;
 
 import org.controlsfx.control.action.Action;
-import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
 
 
@@ -50,28 +38,27 @@ public class AllocateFishController implements Initializable {
         switch (((Button) event.getSource()).getId()) {
             case "red":
                 newFish = new RedFish();
-//                app.heap.addElement(new RedFish());
                 break;
             case "blue":
                 newFish = new BlueFish();
-//                app.heap.addElement(new BlueFish());
                 break;
             case "yellow":
                 newFish = new YellowFish();
-//                app.heap.addElement(new YellowFish());
                 break;
         }
         int fishSize = newFish.getClass().getDeclaredFields().length;
-        boolean isObjectPoolFree = objectPool.getItems().size() < (objectPool.getHeight()/5)-fishSize;
+        boolean isObjectPoolFree = objectPool.getItems().size() < (objectPool.getHeight() / 5) - fishSize;
         if (isObjectPoolFree) {
             app.heap.addElement(newFish);
             List<Fish> handlePoolList = app.heap.getHandlePoolList();
-            handlePool.setItems(handleLists(handlePoolList));
+            ObservableList<Rectangle> rects = handleLists(handlePoolList);
+            handlePool.setItems(rects);
             List<Fish> objectPoolList = app.heap.getObjectPoolList();
             objectPool.setItems(handleLists(objectPoolList));
+
             drawLines2(handlePoolList, objectPoolList);
         } else {
-            Action response = Dialogs.create()
+            Dialogs.create()
                     .title("Looks like trouble Ted")
                     .masthead("Out of memory")
                     .message("No more objects can allocated in the heap")
@@ -81,7 +68,7 @@ public class AllocateFishController implements Initializable {
 
     private ObservableList<Rectangle> handleLists(List<Fish> list) {
         List<Rectangle> rectangles = new ArrayList<>();
-        double cellWidth = handlePool.getWidth() - 3;
+        double cellWidth = handlePool.getWidth();
 
         Rectangle r = null;
         for (Fish f : list) {
@@ -98,16 +85,15 @@ public class AllocateFishController implements Initializable {
                         break;
                 }
                 r.setStroke(Color.BLACK);
-                r.setStrokeWidth(1);
+                r.setStrokeWidth(1.3);
                 rectangles.add(r);
             }
         }
         return FXCollections.observableList(rectangles);
-
     }
 
     protected void drawLines2(List<Fish> handlePoolList,
-                            List<Fish> objectPoolList) {
+                              List<Fish> objectPoolList) {
         List<Node> lines = new ArrayList<>();
         for (Node n : allocateFishPane.getChildren()) {
             if (n instanceof Line || n instanceof Circle) lines.add(n);

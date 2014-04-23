@@ -1,36 +1,33 @@
 package app;
 
 import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
-import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.*;
 import models.Fish;
-import models.Link;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by michal on 17/03/14.
  */
-public class FishImageView extends ImageView{
+public class FishImageView extends ImageView {
     protected List<Link> sourceLinks = new ArrayList<>();
     protected List<Link> targetLinks = new ArrayList<>();
     private final double FITSIZE = 25;
     public String mode;
     private Fish fish;
-    private boolean localVar;
+    private boolean visited = false;
+
+    private boolean marked = false;
 
     private class Delta {
+
         double x, y;
     }
 
@@ -47,7 +44,8 @@ public class FishImageView extends ImageView{
         this.setY(y);
         setFitSize();
     }
-    public FishImageView(FishImageView another){
+
+    public FishImageView(FishImageView another) {
         this.fish = another.getFish();
         this.setImage(another.getFish().getImage());
         this.setX(another.getX());
@@ -59,11 +57,11 @@ public class FishImageView extends ImageView{
         this.setScaleY(another.getScaleY());
         //
         setFitSize();
-        for(Link l:another.sourceLinks){
+        for (Link l : another.sourceLinks) {
             Link link = new Link(l);
             this.sourceLinks.add(link);
         }
-        for(Link l:another.targetLinks){
+        for (Link l : another.targetLinks) {
             Link link = new Link(l);
             this.targetLinks.add(link);
         }
@@ -177,7 +175,6 @@ public class FishImageView extends ImageView{
         });
     }
 
-
     private void setupLink(FishImageView srcView, FishImageView trgView) {
         Fish source = srcView.getFish();
         Fish target = trgView.getFish();
@@ -207,6 +204,7 @@ public class FishImageView extends ImageView{
         }
     }
 
+
     public void setUnlinkMode() {
         for (Link l : targetLinks) {
             l.unlinkModeOn();
@@ -234,7 +232,7 @@ public class FishImageView extends ImageView{
     }
 
     public boolean containsFish(Fish fish) {
-        return this.fish == fish;
+        return this.fish.equals(fish);
     }
 
     public void removeLink(Link link) {
@@ -246,12 +244,45 @@ public class FishImageView extends ImageView{
         return this.fish;
     }
 
-    protected void setAsLocalVar() {
-        this.localVar = true;
-    }
-
     private void setFitSize() {
         this.setFitWidth(FITSIZE + 5);
         this.setFitHeight(FITSIZE);
+    }
+
+
+    public void setMarked(boolean marked) {
+        this.marked = marked;
+    }
+
+    public boolean getMarked() {
+        return marked;
+    }
+
+    protected void setImage(String colour) {
+        this.setImage(new Image("res\\" + colour + "_fish.png", true));
+    }
+
+    public boolean connectedToLocVar(FishImageView view) {
+        if (view instanceof LocalVarView) return true;
+        if (view.targetLinks.size() == 0) return false;
+        for (Link l : view.targetLinks) {
+            FishImageView f = l.getSourceView();
+            if (f.visited == false) {
+                f.visited = true;
+                return connectedToLocVar(f);
+            }
+        }
+        return false;
+
+    }
+
+
+    public static class X_ORDER implements Comparator<FishImageView> {
+        @Override
+        public int compare(FishImageView o1, FishImageView o2) {
+            if (o1.getX() == o2.getX()) return 0;
+            if (o1.getX() < o2.getX()) return -1;
+            else return +1;
+        }
     }
 }

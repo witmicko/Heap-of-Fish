@@ -26,34 +26,36 @@ final public class AssignReferencesController implements Initializable {
     private MainApp app;
 
     private enum Mode {MOVE, LINK, UNLINK}
-
     private Mode mode = Mode.MOVE;
+
     @FXML Pane assignRefsPane;
     @FXML ToggleGroup modeToggle;
     protected List<FishImageView> fishImageViews = new ArrayList<>(20);
-    private LocalVarView[] locVars = new LocalVarView[4];
+    private LocalVarView[] locVars;
 
 
     public void drawAllFish() {
+        if (locVars == null) {
+            locVars = new LocalVarView[4];
+            drawLocalVars();
+        }
 
         assignRefsPane.getChildren().removeAll(fishImageViews);
         assignRefsPane.getChildren().addAll(fishImageViews);
-//        printAll();
-        drawLocalVars();
         List<Fish> fishList = app.heap.getHandlePoolList();
 
 //        if (fishImageViews.size() != fishList.size()) {
-            for (Fish f : fishList) {
-                boolean drawn = false;
-                for (FishImageView fishView : fishImageViews) {
-                    if (fishView.containsFish(f)) drawn = true;
-                }
-                if (!drawn && f != null) {
-                    FishImageView fishImageView = initImage(f);
-                    fishImageViews.add(fishImageView);
-                    assignRefsPane.getChildren().add(fishImageView);
-                }
+        for (Fish f : fishList) {
+            boolean drawn = false;
+            for (FishImageView fishView : fishImageViews) {
+                if (fishView.containsFish(f)) drawn = true;
             }
+            if (!drawn && f != null) {
+                FishImageView fishImageView = initImage(f);
+                fishImageViews.add(fishImageView);
+                assignRefsPane.getChildren().add(fishImageView);
+            }
+        }
 //        }
     }
 
@@ -73,7 +75,7 @@ final public class AssignReferencesController implements Initializable {
             }
             LocalVarView view = new LocalVarView(fish, 50, i * 50 + 50);
             locVars[i] = view;
-            view.setAsLocalVar();
+//            view.setAsLocalVar();
             view.setScaleX(1.5);
             view.setScaleY(1.5);
             view.setOnDragDetected(new EventHandler<MouseEvent>() {

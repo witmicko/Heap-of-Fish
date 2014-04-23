@@ -1,17 +1,10 @@
 package app;
 
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.image.Image;
-import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import models.*;
+import models.Fish;
 
 import java.net.URL;
 import java.util.*;
@@ -24,19 +17,20 @@ final public class GarbageCollectController implements Initializable {
 
     @FXML Pane garbCollPane;
     private List<FishImageView> fishImageViews = new ArrayList<>(20);
-    private List<Link>links = new ArrayList<>();
+    private List<Link> links = new ArrayList<>();
     private LocalVarView[] locVars = new LocalVarView[4];
     private boolean initialMark = false;
+    private boolean foundOrphans = false;
 
 
-    @FXML public void copyFish(){
+    @FXML
+    public void copyFish() {
+        initialMark = foundOrphans = false;
         garbCollPane.getChildren().removeAll(fishImageViews);
-//        garbCollPane.getChildren().addAll(fishImageViews);
-
-        fishImageViews  = app.assignRefController.getAllImages();
-        for(FishImageView fishView:fishImageViews){
+        fishImageViews = app.assignRefController.getAllImages();
+        for (FishImageView fishView : fishImageViews) {
             garbCollPane.getChildren().add(fishView);
-            for(Link l:fishView.targetLinks){
+            for (Link l : fishView.targetLinks) {
                 links.add(l);
                 garbCollPane.getChildren().add(l);
                 l.toBack();
@@ -46,20 +40,53 @@ final public class GarbageCollectController implements Initializable {
 
     @FXML
     public void step() {
-        if(!initialMark)mark();
-        stepThroughLocVars();
+        while (true) {
+            if (!initialMark) {
+                mark();
+                Collections.sort(fishImageViews, new FishImageView.X_ORDER());
+                break;
+            }
+            if (!foundOrphans) {
+
+                findOrphans();
+                break;
+            }
+        }
+
     }
 
-    private void stepThroughLocVars() {
+    private void findOrphans() {
+        step:
+        {
+            for (FishImageView f : fishImageViews) {
+                if (f.connectedToLocVar(f)) {
+                    f.setImage("black");
+                    f.setMarked(true);
+//                    break step;
+                }
+            }
+            List<FishImageView> unmarked = new ArrayList<>();
+            for (FishImageView f : fishImageViews) {
+                if (!f.getMarked()) {
+                    unmarked.add(f);
+                }
+            }
+            fishImageViews.removeAll(unmarked);
+            garbCollPane.getChildren().removeAll(unmarked);
+            for (FishImageView f : fishImageViews) {
+                f.setImage(f.getFish().getImage());
+            }
+        }
 
 
 
     }
 
     private void mark() {
-        for(FishImageView f:fishImageViews){
-            f.setImage(new Image("res\\white_fish.png", true));
+        for (FishImageView f : fishImageViews) {
+            f.setImage("white");
         }
+        initialMark = true;
     }
 
     @FXML
@@ -77,4 +104,6 @@ final public class GarbageCollectController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         System.out.println("Initializing the assignRefs controller");
     }
+
+
 }

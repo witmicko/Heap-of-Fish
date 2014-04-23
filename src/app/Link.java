@@ -1,13 +1,11 @@
-package models;
+package app;
 
-import app.FishImageView;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.geometry.Point2D;
-import javafx.scene.Parent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
+import models.Fish;
 
 /**
  * Created by michal on 18/04/2014.
@@ -104,5 +102,16 @@ public class Link extends Line {
         sourceView.getFish().removeFish(this.targetView.getFish());
         sourceView.removeLink(this);
         targetView.removeLink(this);
+    }
+    public boolean linked(Fish fish){
+        return sourceView.getFish().equals(fish) || targetView.getFish().equals(fish);
+    }
+
+    public boolean localVarSource(){
+        return this.sourceView instanceof LocalVarView;
+    }
+
+    public FishImageView getSourceView(){
+        return sourceView;
     }
 }
