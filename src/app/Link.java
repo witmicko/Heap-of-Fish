@@ -114,4 +114,15 @@ public class Link extends Line {
     public FishImageView getSourceView(){
         return sourceView;
     }
+
+    public FishImageView getTargetView(){
+        return targetView;
+    }
+
+    public void setSourceView(FishImageView fishImageView){
+        sourceView = fishImageView;
+    }
+    public void setTargetView(FishImageView fishImageView){
+        targetView = fishImageView;
+    }
 }

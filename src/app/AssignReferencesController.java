@@ -26,6 +26,7 @@ final public class AssignReferencesController implements Initializable {
     private MainApp app;
 
     private enum Mode {MOVE, LINK, UNLINK}
+
     private Mode mode = Mode.MOVE;
 
     @FXML Pane assignRefsPane;
@@ -160,21 +161,41 @@ final public class AssignReferencesController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         System.out.println("Initializing the assignRefs controller");
     }
-    private void printAll(){
+
+    private void printAll() {
         System.out.println("*******************");
-        for(FishImageView fV: fishImageViews){
-            System.out.println(fV.getFish().toString() + " "+fV.getFish().hashCode());
+        for (FishImageView fV : fishImageViews) {
+            System.out.println(fV.getFish().toString() + " " + fV.getFish().hashCode());
         }
     }
-    public List<FishImageView> getAllImages(){
+
+    public List<FishImageView> getAllImages() {
         List<FishImageView> images = new ArrayList<>();
-        for(FishImageView f: fishImageViews){
-            images.add(new FishImageView(f));
+        List<FishImageView> tempList = new ArrayList<>();
+        tempList.addAll(fishImageViews);
+        tempList.addAll(Arrays.asList(locVars).subList(1, 4));
+
+        Map<FishImageView,FishImageView>oldToNewMap = new HashMap<>();
+
+        for (FishImageView tempView : tempList) {
+            FishImageView newView;
+            if (tempView instanceof LocalVarView) newView = new LocalVarView((LocalVarView) tempView);
+            else newView = new FishImageView(tempView);
+            images.add(newView);
+            oldToNewMap.put(tempView,newView);
         }
 
-        for (int i = 1; i < locVars.length; i++) {
-            images.add(new LocalVarView(locVars[i]));
+        for(FishImageView f:images){
+            for(FishImageView tempView:tempList) {
+                for (Link l : f.sourceLinks) {
+                    if (l.getTargetView().equals(tempView)) l.setTargetView(oldToNewMap.get(tempView));
+                }
+                for (Link l : f.targetLinks) {
+                    if (l.getSourceView().equals(tempView)) l.setSourceView(oldToNewMap.get(tempView));
+                }
+            }
         }
-        return images;
+            System.out.println();
+            return images;
+        }
     }
-}

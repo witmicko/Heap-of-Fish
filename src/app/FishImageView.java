@@ -22,7 +22,6 @@ public class FishImageView extends ImageView {
     private final double FITSIZE = 25;
     public String mode;
     private Fish fish;
-    private boolean visited = false;
 
     private boolean marked = false;
 
@@ -59,10 +58,12 @@ public class FishImageView extends ImageView {
         setFitSize();
         for (Link l : another.sourceLinks) {
             Link link = new Link(l);
+            link.setSourceView(this);
             this.sourceLinks.add(link);
         }
         for (Link l : another.targetLinks) {
             Link link = new Link(l);
+            link.setTargetView(this);
             this.targetLinks.add(link);
         }
     }
@@ -160,7 +161,7 @@ public class FishImageView extends ImageView {
             @Override
             public void handle(DragEvent event) {
                 FishImageView srcView = (FishImageView) event.getGestureSource();
-                FishImageView trgView = (FishImageView) event.getTarget();
+                FishImageView trgView = (FishImageView) event.getGestureTarget();
                 trgView.setScaleX(1.0);
                 trgView.setScaleY(1.0);
 
@@ -262,27 +263,38 @@ public class FishImageView extends ImageView {
         this.setImage(new Image("res\\" + colour + "_fish.png", true));
     }
 
+
+//    public FishImageView connectedToLocalVar(FishImageView view) {
+//        while (view != null) {
+//            for (Link l : view.targetLinks) {
+//                FishImageView f = l.getSourceView();
+//                if (f.visited == false) {
+//                    f.visited = true;
+//                    return connectedToLocVar(f);
+//                }
+//            }
+//        }
+//        return view;
+//    }
+
     public boolean connectedToLocVar(FishImageView view) {
         if (view instanceof LocalVarView) return true;
-        if (view.targetLinks.size() == 0) return false;
+//        if (view.targetLinks.size() == 0) return false;
         for (Link l : view.targetLinks) {
             FishImageView f = l.getSourceView();
-            if (f.visited == false) {
-                f.visited = true;
-                return connectedToLocVar(f);
-            }
+            return connectedToLocVar(f);
         }
-        return false;
 
+    return false;
+}
+
+
+public static class X_ORDER implements Comparator<FishImageView> {
+    @Override
+    public int compare(FishImageView o1, FishImageView o2) {
+        if (o1.getX() == o2.getX()) return 0;
+        if (o1.getX() < o2.getX()) return -1;
+        else return +1;
     }
-
-
-    public static class X_ORDER implements Comparator<FishImageView> {
-        @Override
-        public int compare(FishImageView o1, FishImageView o2) {
-            if (o1.getX() == o2.getX()) return 0;
-            if (o1.getX() < o2.getX()) return -1;
-            else return +1;
-        }
-    }
+}
 }

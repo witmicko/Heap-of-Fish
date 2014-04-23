@@ -21,6 +21,7 @@ final public class GarbageCollectController implements Initializable {
     private LocalVarView[] locVars = new LocalVarView[4];
     private boolean initialMark = false;
     private boolean foundOrphans = false;
+    private int step = 0;
 
 
     @FXML
@@ -36,48 +37,76 @@ final public class GarbageCollectController implements Initializable {
                 l.toBack();
             }
         }
+        System.out.println();
     }
 
     @FXML
     public void step() {
-        while (true) {
-            if (!initialMark) {
-                mark();
-                Collections.sort(fishImageViews, new FishImageView.X_ORDER());
-                break;
-            }
-            if (!foundOrphans) {
-
-                findOrphans();
-                break;
-            }
-        }
-
-    }
-
-    private void findOrphans() {
         step:
         {
-            for (FishImageView f : fishImageViews) {
-                if (f.connectedToLocVar(f)) {
-                    f.setImage("black");
-                    f.setMarked(true);
-//                    break step;
+            while (true) {
+                if (!initialMark) {
+                    mark();
+                    Collections.sort(fishImageViews, new FishImageView.X_ORDER());
+                    break step;
+                }
+                if (!foundOrphans) {
+                    findOrphans(step);
+                    step++;
+                    break step;
                 }
             }
+        }
+//        System.out.println();
+    }
+
+    private void findOrphans(int step) {
+        step:
+        {
+            if (step < fishImageViews.size()) {
+                FishImageView fView = fishImageViews.get(step);
+                try {
+                    if (fView.connectedToLocVar(fView)) {
+                        fView.setImage("black");
+                        fView.setMarked(true);
+                        for (Link link : fView.sourceLinks) {
+                            link.getTargetView().setMarked(true);
+                        }
+                        for (Link link : fView.targetLinks) {
+                            link.getSourceView().setMarked(true);
+                        }
+                        break step;
+                    }
+
+                } catch (StackOverflowError e) {
+                    System.out.println();
+                    for (Link link : fView.targetLinks) {
+                        if (link.getSourceView().getMarked()) {
+                            fView.setImage("black");
+                            fView.setMarked(true);
+                            break step;
+                        }
+                    }
+//                    e.printStackTrace();
+                }
+            }
+
             List<FishImageView> unmarked = new ArrayList<>();
+            List<Link> unmarkedLinks = new ArrayList<>();
             for (FishImageView f : fishImageViews) {
                 if (!f.getMarked()) {
+                    unmarkedLinks.addAll(f.targetLinks);
                     unmarked.add(f);
                 }
             }
             fishImageViews.removeAll(unmarked);
+            links.removeAll(unmarkedLinks);
             garbCollPane.getChildren().removeAll(unmarked);
+            garbCollPane.getChildren().removeAll(unmarkedLinks);
             for (FishImageView f : fishImageViews) {
                 f.setImage(f.getFish().getImage());
             }
         }
-
 
 
     }
@@ -93,6 +122,9 @@ final public class GarbageCollectController implements Initializable {
     public void reset(ActionEvent event) {
         garbCollPane.getChildren().removeAll(fishImageViews);
         garbCollPane.getChildren().removeAll(links);
+        fishImageViews.clear();
+        links.clear();
+        step = 0;
         copyFish();
     }
 
