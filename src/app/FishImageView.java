@@ -176,7 +176,7 @@ public class FishImageView extends ImageView {
         });
     }
 
-    private void setupLink(FishImageView srcView, FishImageView trgView) {
+    protected void setupLink(FishImageView srcView, FishImageView trgView) {
         Fish source = srcView.getFish();
         Fish target = trgView.getFish();
 
@@ -278,7 +278,7 @@ public class FishImageView extends ImageView {
 //    }
 
     public boolean connectedToLocVar(FishImageView view) {
-        if (view instanceof LocalVarView) return true;
+        if (view instanceof LocalVarView || marked) return true;
 //        if (view.targetLinks.size() == 0) return false;
         for (Link l : view.targetLinks) {
             FishImageView f = l.getSourceView();

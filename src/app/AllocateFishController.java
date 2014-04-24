@@ -1,5 +1,6 @@
 package app;
 
+import com.sun.org.apache.xml.internal.security.exceptions.AlgorithmAlreadyRegisteredException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -32,6 +33,30 @@ public class AllocateFishController implements Initializable {
     @FXML ListView<Rectangle> objectPool;
     @FXML AnchorPane allocateFishPane;
 
+
+    protected void newFish(Fish newFish){
+        int fishSize = newFish.getClass().getDeclaredFields().length;
+        boolean isObjectPoolFree = objectPool.getItems().size() < (objectPool.getHeight() / 5) - fishSize;
+        if (isObjectPoolFree) {
+            app.heap.addElement(newFish);
+
+            List<Fish> handlePoolList = app.heap.getHandlePoolList();
+            ObservableList<Rectangle> rects = handleLists(handlePoolList);
+            handlePool.setItems(rects);
+
+            List<Fish> objectPoolList = app.heap.getObjectPoolList();
+            objectPool.setItems(handleLists(objectPoolList));
+
+            drawLines2(handlePoolList, objectPoolList);
+        } else {
+            Dialogs.create()
+                    .title("Looks like trouble Ted")
+                    .masthead("Out of memory")
+                    .message("No more objects can allocated in the heap")
+                    .showError();
+        }
+    }
+
     @FXML
     public void newFish(MouseEvent event) {
         Fish newFish = null;
@@ -46,23 +71,25 @@ public class AllocateFishController implements Initializable {
                 newFish = new YellowFish();
                 break;
         }
-        int fishSize = newFish.getClass().getDeclaredFields().length;
-        boolean isObjectPoolFree = objectPool.getItems().size() < (objectPool.getHeight() / 5) - fishSize;
-        if (isObjectPoolFree) {
-            app.heap.addElement(newFish);
-            List<Fish> handlePoolList = app.heap.getHandlePoolList();
-            ObservableList<Rectangle> rects = handleLists(handlePoolList);
-            handlePool.setItems(rects);
-            List<Fish> objectPoolList = app.heap.getObjectPoolList();
-            objectPool.setItems(handleLists(objectPoolList));
+        newFish(newFish);
+    }
 
-            drawLines2(handlePoolList, objectPoolList);
-        } else {
-            Dialogs.create()
-                    .title("Looks like trouble Ted")
-                    .masthead("Out of memory")
-                    .message("No more objects can allocated in the heap")
-                    .showError();
+    protected void redraw(List<Fish>fishs){
+        app.heap.clearHeap();
+        objectPool.getItems().clear();
+        handlePool.getItems().clear();
+//        objectPool.setItems(FXCollections.observableArrayList());
+//        handlePool.setItems(FXCollections.observableArrayList());
+
+        List<Node>nodes = allocateFishPane.getChildren();
+        List<Node>rmLines = new ArrayList<>();
+        for (Node node : nodes) {
+            if(node instanceof Circle || node instanceof Line)rmLines.add(node);
+        }
+        allocateFishPane.getChildren().removeAll(rmLines);
+
+        for(Fish f:fishs){
+            newFish(f);
         }
     }
 
@@ -120,6 +147,7 @@ public class AllocateFishController implements Initializable {
                 }
             }
         }
+
     }
 
 

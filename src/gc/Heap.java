@@ -22,13 +22,18 @@ public class Heap {
         return handlePool.fishList;
     }
 
-    public List<Fish> getObjectPoolList(){
+    public List<Fish> getObjectPoolList() {
         return objectPool.objectPoolList;
     }
 
     public void addElement(Fish fish) {
         addToHandlePool(fish);
         addToObjectPool(fish);
+    }
+
+    public void clearHeap() {
+        handlePool.clear();
+        objectPool.clear();
     }
 
     private void addToObjectPool(Fish fish) {
@@ -41,7 +46,7 @@ public class Heap {
                     for (int k = 0; k < fishSize; k++) {
                         objectPool.objectPoolList.set(i + k, fish);
                     }
-                    break ;
+                    break;
                 }
             }
         }

@@ -4,6 +4,7 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.*;
@@ -37,19 +38,36 @@ final public class AssignReferencesController implements Initializable {
 
     public void drawAllFish() {
         if (locVars == null) {
-            locVars = new LocalVarView[4];
             drawLocalVars();
         }
+        List<Fish> fishList = app.heap.getHandlePoolList();
+
+        List<FishImageView>removed = new ArrayList<>();
+        for(FishImageView f:fishImageViews){
+            boolean found = false;
+            for(Fish fish:fishList){
+                if(f.containsFish(fish))found = true;
+            }
+            if(!found){
+                removed.add(f);
+                assignRefsPane.getChildren().removeAll(f.sourceLinks);
+                assignRefsPane.getChildren().removeAll(f.targetLinks);
+            }
+        }
+        assignRefsPane.getChildren().removeAll(removed);
+        fishImageViews.removeAll(removed);
 
         assignRefsPane.getChildren().removeAll(fishImageViews);
         assignRefsPane.getChildren().addAll(fishImageViews);
-        List<Fish> fishList = app.heap.getHandlePoolList();
 
-//        if (fishImageViews.size() != fishList.size()) {
+
+
         for (Fish f : fishList) {
             boolean drawn = false;
             for (FishImageView fishView : fishImageViews) {
-                if (fishView.containsFish(f)) drawn = true;
+                if (fishView.containsFish(f)) {
+                    drawn = true;
+                }
             }
             if (!drawn && f != null) {
                 FishImageView fishImageView = initImage(f);
@@ -57,10 +75,11 @@ final public class AssignReferencesController implements Initializable {
                 assignRefsPane.getChildren().add(fishImageView);
             }
         }
-//        }
     }
 
+
     private void drawLocalVars() {
+        locVars = new LocalVarView[4];
         Fish fish = null;
         for (int i = 1; i <= 3; i++) {
             switch (i) {
@@ -76,7 +95,6 @@ final public class AssignReferencesController implements Initializable {
             }
             LocalVarView view = new LocalVarView(fish, 50, i * 50 + 50);
             locVars[i] = view;
-//            view.setAsLocalVar();
             view.setScaleX(1.5);
             view.setScaleY(1.5);
             view.setOnDragDetected(new EventHandler<MouseEvent>() {
@@ -106,7 +124,7 @@ final public class AssignReferencesController implements Initializable {
             rec.toBack();
         }
     }
-
+//
 
     private FishImageView initImage(Fish fish) {
         final FishImageView imageView = new FishImageView(fish);
@@ -137,15 +155,15 @@ final public class AssignReferencesController implements Initializable {
         String selectedToggle = ((RadioButton) event.getSource()).getId();
         for (FishImageView f : fishImageViews) {
             switch (selectedToggle) {
-                case "move":
+                case "MOVE":
                     mode = Mode.MOVE;
                     f.setMoveMode();
                     break;
-                case "link":
+                case "LINK":
                     mode = Mode.LINK;
                     f.setLinkMode();
                     break;
-                case "unlink":
+                case "UNLINK":
                     mode = Mode.UNLINK;
                     f.setUnlinkMode();
                     break;
@@ -162,31 +180,34 @@ final public class AssignReferencesController implements Initializable {
         System.out.println("Initializing the assignRefs controller");
     }
 
-    private void printAll() {
-        System.out.println("*******************");
-        for (FishImageView fV : fishImageViews) {
-            System.out.println(fV.getFish().toString() + " " + fV.getFish().hashCode());
-        }
-    }
 
-    public List<FishImageView> getAllImages() {
-        List<FishImageView> images = new ArrayList<>();
+
+
+    public List<FishImageView> getAllAsList(){
         List<FishImageView> tempList = new ArrayList<>();
         tempList.addAll(fishImageViews);
         tempList.addAll(Arrays.asList(locVars).subList(1, 4));
+        return tempList;
+    }
 
-        Map<FishImageView,FishImageView>oldToNewMap = new HashMap<>();
+
+    public List<FishImageView> hardCopy(List<FishImageView> fishImageViews) {
+        List<FishImageView> images = new ArrayList<>();
+        List<FishImageView> tempList = new ArrayList<>();
+        tempList.addAll(fishImageViews);
+
+        Map<FishImageView, FishImageView> oldToNewMap = new HashMap<>();
 
         for (FishImageView tempView : tempList) {
             FishImageView newView;
             if (tempView instanceof LocalVarView) newView = new LocalVarView((LocalVarView) tempView);
             else newView = new FishImageView(tempView);
             images.add(newView);
-            oldToNewMap.put(tempView,newView);
+            oldToNewMap.put(tempView, newView);
         }
 
-        for(FishImageView f:images){
-            for(FishImageView tempView:tempList) {
+        for (FishImageView f : images) {
+            for (FishImageView tempView : tempList) {
                 for (Link l : f.sourceLinks) {
                     if (l.getTargetView().equals(tempView)) l.setTargetView(oldToNewMap.get(tempView));
                 }
@@ -195,7 +216,7 @@ final public class AssignReferencesController implements Initializable {
                 }
             }
         }
-            System.out.println();
-            return images;
-        }
+        return images;
     }
+
+}

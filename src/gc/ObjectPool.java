@@ -17,4 +17,12 @@ public class ObjectPool {
             objectPoolList.add(null);
         }
     }
+
+    public void clear(){
+        int size = objectPoolList.size();
+        objectPoolList.clear();
+        for (int i = 0; i < size; i++){
+            objectPoolList.add(null);
+        }
+    }
 }

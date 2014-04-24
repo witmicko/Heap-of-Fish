@@ -1,5 +1,7 @@
 package app;
 
+import javafx.event.EventHandler;
+import javafx.scene.input.*;
 import models.Fish;
 
 /**
@@ -24,4 +26,24 @@ public class LocalVarView extends FishImageView {
     }
 
 
+    public void setHandlers() {
+        LocalVarView view = this;
+        view.setOnDragDetected(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println("asasd");
+                Dragboard db = view.startDragAndDrop(TransferMode.LINK);
+                ClipboardContent content = new ClipboardContent();
+                content.putString("");
+                db.setContent(content);
+                event.consume();
+            }
+        });
+        view.setOnDragOver(new EventHandler<DragEvent>() {
+            public void handle(DragEvent event) {
+                event.acceptTransferModes(TransferMode.LINK);
+                event.consume();
+            }
+        });
+    }
 }

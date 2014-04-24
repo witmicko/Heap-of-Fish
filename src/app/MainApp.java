@@ -14,6 +14,7 @@ import models.YellowFish;
 import sun.applet.Main;
 
 import java.io.BufferedReader;
+import java.util.ArrayList;
 
 public class MainApp extends Application {
     Scene scene;
@@ -42,6 +43,7 @@ public class MainApp extends Application {
         mainController = (MainController) mainFxmlLoader.getNamespace().get("controller");
         mainController.setApp(this);
 
+        allocController.redraw(new ArrayList<Fish>());
         //customized css stylesheet
         scene = new Scene(root, 600, 400);
         String stylesheet = getClass().getResource("/res/stylesheet.css").toExternalForm();

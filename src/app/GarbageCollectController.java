@@ -1,5 +1,6 @@
 package app;
 
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -18,17 +19,20 @@ final public class GarbageCollectController implements Initializable {
     @FXML Pane garbCollPane;
     private List<FishImageView> fishImageViews = new ArrayList<>(20);
     private List<Link> links = new ArrayList<>();
-    private LocalVarView[] locVars = new LocalVarView[4];
+//    private LocalVarView[] locVars = new LocalVarView[4];
     private boolean initialMark = false;
     private boolean foundOrphans = false;
+    private boolean removed = false;
     private int step = 0;
 
 
     @FXML
     public void copyFish() {
-        initialMark = foundOrphans = false;
+        initialMark = foundOrphans = removed = false;
         garbCollPane.getChildren().removeAll(fishImageViews);
-        fishImageViews = app.assignRefController.getAllImages();
+        List<FishImageView>temp = app.assignRefController.getAllAsList();
+        fishImageViews = app.assignRefController.hardCopy(temp);
+
         for (FishImageView fishView : fishImageViews) {
             garbCollPane.getChildren().add(fishView);
             for (Link l : fishView.targetLinks) {
@@ -42,73 +46,81 @@ final public class GarbageCollectController implements Initializable {
 
     @FXML
     public void step() {
-        step:
-        {
-            while (true) {
-                if (!initialMark) {
-                    mark();
-                    Collections.sort(fishImageViews, new FishImageView.X_ORDER());
-                    break step;
-                }
-                if (!foundOrphans) {
-                    findOrphans(step);
-                    step++;
-                    break step;
-                }
+        System.out.println(step);
+        if (!initialMark) {
+            mark();
+            Collections.sort(fishImageViews, new FishImageView.X_ORDER());
+        } else if (!foundOrphans) {
+            findOrphans(step);
+            step++;
+        } else if (!removed) removeOrphans();
+
+    }
+
+    private void removeOrphans() {
+        List<FishImageView> unmarked = new ArrayList<>();
+        List<Link> unmarkedLinks = new ArrayList<>();
+        for (FishImageView f : fishImageViews) {
+            if (!f.getMarked()) {
+                unmarkedLinks.addAll(f.targetLinks);
+                unmarked.add(f);
             }
         }
-//        System.out.println();
+        fishImageViews.removeAll(unmarked);
+        links.removeAll(unmarkedLinks);
+        garbCollPane.getChildren().removeAll(unmarked);
+        garbCollPane.getChildren().removeAll(unmarkedLinks);
+
+        List<Fish> fishs = new ArrayList<>();
+        for (FishImageView f : fishImageViews) {
+            f.setMarked(false);
+            if (!(f instanceof LocalVarView)) {
+                fishs.add(f.getFish());
+            }
+            f.setImage(f.getFish().getImage());
+        }
+        app.allocController.redraw(fishs);
+
+        removed = true;
+        step = 0;
     }
 
     private void findOrphans(int step) {
-        step:
-        {
-            if (step < fishImageViews.size()) {
-                FishImageView fView = fishImageViews.get(step);
-                try {
-                    if (fView.connectedToLocVar(fView)) {
-                        fView.setImage("black");
-                        fView.setMarked(true);
-                        for (Link link : fView.sourceLinks) {
-                            link.getTargetView().setMarked(true);
-                        }
-                        for (Link link : fView.targetLinks) {
-                            link.getSourceView().setMarked(true);
-                        }
-                        break step;
+        if (step < fishImageViews.size()) {
+            FishImageView fView = fishImageViews.get(step);
+            fView.setImage("grey");
+            try {
+                if (fView.getMarked() || fView.connectedToLocVar(fView)) {
+                    fView.setImage("black");
+                    fView.setMarked(true);
+                    for (Link link : fView.sourceLinks) {
+                        link.getTargetView().setMarked(true);
                     }
-
-                } catch (StackOverflowError e) {
-                    System.out.println();
                     for (Link link : fView.targetLinks) {
-                        if (link.getSourceView().getMarked()) {
-                            fView.setImage("black");
-                            fView.setMarked(true);
-                            break step;
-                        }
+                        link.getSourceView().setMarked(true);
                     }
+                }
+
+            } catch (StackOverflowError e) {
+                System.out.println();
+//                    for (Link link : fView.targetLinks) {
+//                        if (link.getSourceView().getMarked()) {
+//                            fView.setImage("black");
+//                            fView.setMarked(true);
+//                            break step;
+//                        }
+//                    }
+//                    for (Link link : fView.sourceLinks) {
+//                        if (link.getTargetView().getMarked()) {
+//                            fView.setImage("black");
+//                            fView.setMarked(true);
+//                            break step;
+//                        }
+//                    }
 //                    e.printStackTrace();
-                }
             }
-
-            List<FishImageView> unmarked = new ArrayList<>();
-            List<Link> unmarkedLinks = new ArrayList<>();
-            for (FishImageView f : fishImageViews) {
-                if (!f.getMarked()) {
-                    unmarkedLinks.addAll(f.targetLinks);
-                    unmarked.add(f);
-                }
-            }
-            fishImageViews.removeAll(unmarked);
-            links.removeAll(unmarkedLinks);
-            garbCollPane.getChildren().removeAll(unmarked);
-            garbCollPane.getChildren().removeAll(unmarkedLinks);
-            for (FishImageView f : fishImageViews) {
-                f.setImage(f.getFish().getImage());
-            }
+            if (step == fishImageViews.size() - 1) foundOrphans = true;
         }
-
-
     }
 
     private void mark() {
